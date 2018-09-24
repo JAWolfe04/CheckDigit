@@ -25,6 +25,7 @@ class AssignmentTrackerApp(tk.Frame):
         self.master.title('Assignment Tracker')
         self.master.resizable(0,0)
         self.master.protocol("WM_DELETE_WINDOW", self.deleteWindow)
+        self.topFrame = tk.Frame(self.master)
 
         # Initialize file name and save progress
         # for current state
@@ -32,45 +33,58 @@ class AssignmentTrackerApp(tk.Frame):
         self.progressSaved = True
 
         # Create and position widgets and window
-        self.createWindowWidgets(self.master)
+        self.createWindowWidgets(self.topFrame)
         self.createTrackerTV(self.master)
         self.positionWidgets(self.master)        
         self.createFileMenu(self.master)
         self.centerWindow(self.master)
 
 
-    def createWindowWidgets(self, win):
+    def createWindowWidgets(self, frame):
         ''' 
-           Args: win (tkinter.Tk): Root window'''
-        self.AssignmentLabel = tk.Label(win, text="Assignment Number")
-        self.AssignmentBox = tk.Entry()
-        self.StudentLabel = tk.Label(win, text='Student Name')
-        self.StudentBox = tk.Entry()
-        self.GradeLabel = tk.Label(win, text='Assignment Grade')
-        self.GradeBox = tk.Entry()
-        self.AddEntryButton = tk.Button(win, text="Add/Edit", command=self.addEntry)
-        self.clearBoxesButton = tk.Button(win, text = 'Clear', command=self.clearBoxes)
-        self.removeEntryButton = tk.Button(win, text = 'Remove', command = self.removeEntry)
-        self.getEntryButton = tk.Button(win, text = 'Retrieve', command = self.getAssignment)
-        self.randomButton = tk.Button(win, text = 'Random', command = self.getRandom)
+           Args: frame (tkinter.Tk): Frame for widgets'''
+        self.AssignmentLabel = tk.Label(frame, text="Assignment Number")
+        self.AssignmentBox = tk.Entry(frame)
+        self.StudentLabel = tk.Label(frame, text='Student Name')
+        self.StudentBox = tk.Entry(frame)
+        self.GradeLabel = tk.Label(frame, text='Assignment Grade')
+        self.GradeBox = tk.Entry(frame)
+        self.AddEntryButton = tk.Button(frame, text="Add/Edit", \
+                                        command=self.addEntry, width = 10)
+        self.clearBoxesButton = tk.Button(frame, text = 'Clear', \
+                                          command=self.clearBoxes, width = 10)
+        self.removeEntryButton = tk.Button(frame, text = 'Remove', \
+                                           command = self.removeEntry, width = 10)
+        self.getEntryButton = tk.Button(frame, text = 'Retrieve', \
+                                        command = self.getAssignment, width = 10)
+        self.randomButton = tk.Button(frame, text = 'Random', \
+                                      command = self.getRandom, width = 10)
 
 
     def createTrackerTV(self, win):
         ''' 
            Args: win (tkinter.Tk): Root window'''
-        self.trackerTV = ttk.Treeview(win, columns=('Assignment', 'Class', 'Type', 'Student', 'Grade'), selectmode='browse', show='headings')
-        self.trackerTV.heading('#1', text='Assignment', command=lambda: self.sortColumn('Assignment', '#1', False))
-        self.trackerTV.heading('#2', text='Class', command=lambda: self.sortColumn('Class', '#2', False))
-        self.trackerTV.heading('#3', text='Type', command=lambda: self.sortColumn('Type', '#3', False))
-        self.trackerTV.heading('#4', text='Student', command=lambda: self.sortColumn('Student', '#4', False))
-        self.trackerTV.heading('#5', text='Grade', command=lambda: self.sortColumn('Grade', '#5', False))
-        self.trackerTV.column('#1', minwidth = 125, width = 125, stretch = False, anchor=tk.W)
-        self.trackerTV.column('#2', minwidth = 125, width = 125, stretch = False, anchor=tk.W)
-        self.trackerTV.column('#3', minwidth = 125, width = 125, stretch = False, anchor=tk.W)
-        self.trackerTV.column('#4', minwidth = 125, width = 125, stretch = False, anchor=tk.W)
-        self.trackerTV.column('#5', minwidth = 125, width = 125, stretch = False, anchor=tk.W)
-        self.scrollbar = tk.Scrollbar(win, orient="vertical", command=self.trackerTV.yview)
-        self.trackerTV.configure(yscrollcommand=self.scrollbar.set)
+        columns = ('Assignment', 'Class', 'Type', 'Student', 'Grade')
+        self.trackerTV = ttk.Treeview(win, columns = columns, \
+                                      selectmode = 'browse', show = 'headings')
+        self.trackerTV.heading('#1', text='Assignment', command = lambda: \
+                               self.sortColumn('Assignment', '#1', False))
+        self.trackerTV.heading('#2', text = 'Class', command = lambda: \
+                               self.sortColumn('Class', '#2', False))
+        self.trackerTV.heading('#3', text = 'Type', command = lambda: \
+                               self.sortColumn('Type', '#3', False))
+        self.trackerTV.heading('#4', text = 'Student', command = lambda: \
+                               self.sortColumn('Student', '#4', False))
+        self.trackerTV.heading('#5', text = 'Grade', command = lambda: \
+                               self.sortColumn('Grade', '#5', False))
+        self.trackerTV.column('#1', minwidth = 125, width = 125, anchor = tk.W)
+        self.trackerTV.column('#2', minwidth = 125, width = 125, anchor = tk.W)
+        self.trackerTV.column('#3', minwidth = 125, width = 125, anchor = tk.W)
+        self.trackerTV.column('#4', minwidth = 125, width = 125, anchor = tk.W)
+        self.trackerTV.column('#5', minwidth = 125, width = 125, anchor = tk.W)
+        self.scrollbar = tk.Scrollbar(win, orient = "vertical", \
+                                      command = self.trackerTV.yview)
+        self.trackerTV.configure(yscrollcommand = self.scrollbar.set)
         self.trackerTV.bind('<Button>', self.separatorClick)
         self.trackerTV.bind('<ButtonRelease>', self.separatorClick)
         self.trackerTV.bind('<Motion>', self.separatorClick)
@@ -79,20 +93,22 @@ class AssignmentTrackerApp(tk.Frame):
     def positionWidgets(self, win):
         ''' 
            Args: win (tkinter.Tk): Root window'''
-        self.AssignmentLabel.grid(row=0, column=0, sticky=tk.E)
-        self.AssignmentBox.grid(row=0, column=1, sticky=tk.W+tk.E)
-        self.StudentLabel.grid(row = 1, column = 0, sticky=tk.E)
-        self.StudentBox.grid(row = 1, column = 1, sticky=tk.W+tk.E)
-        self.GradeLabel.grid(row = 2, column = 0, sticky=tk.E)
-        self.GradeBox.grid(row = 2, column = 1, sticky=tk.W+tk.E)
-        self.clearBoxesButton.grid(row = 0, column = 2, sticky=tk.W+tk.E)
-        self.randomButton.grid(row = 0, column = 3, sticky=tk.W+tk.E)
-        win.grid_rowconfigure(3, minsize = 25)
-        self.AddEntryButton.grid(row=4, column=0, sticky=tk.W+tk.E)
-        self.getEntryButton.grid(row = 4, column = 1, sticky=tk.W+tk.E)
-        self.removeEntryButton.grid(row = 4, column = 2, sticky=tk.W+tk.E)
-        self.trackerTV.grid(row=5, columnspan=4)
-        self.scrollbar.grid(row=5, column=4, sticky=tk.N+tk.S)
+        self.AssignmentLabel.grid(row = 0, column = 0, sticky = tk.E)
+        self.AssignmentBox.grid(row = 0, column = 1, sticky = tk.EW)
+        self.StudentLabel.grid(row = 1, column = 0, sticky = tk.E)
+        self.StudentBox.grid(row = 1, column = 1, sticky = tk.EW)
+        self.GradeLabel.grid(row = 2, column = 0, sticky = tk.E)
+        self.GradeBox.grid(row = 2, column = 1, sticky = tk.EW)
+        self.clearBoxesButton.grid(row = 0, column = 2)
+        self.randomButton.grid(row = 0, column = 3)
+        win.grid_rowconfigure(1, minsize = 25)
+        self.AddEntryButton.grid(row = 4, column = 0)
+        self.getEntryButton.grid(row = 4, column = 1)
+        self.removeEntryButton.grid(row = 4, column = 2)
+        self.topFrame.grid(sticky = tk.EW)
+        self.topFrame.grid_columnconfigure(2, minsize = 125)
+        self.trackerTV.grid(row = 2, column = 0)
+        self.scrollbar.grid(row = 2, column  = 1, sticky = tk.NS)
 
 
     def createFileMenu(self, win):
@@ -229,8 +245,8 @@ class AssignmentTrackerApp(tk.Frame):
                 numberSum += (ord(validateStr[weight]) - 55) * weight
                 
             else:
-                messagebox.showerror('Invalid Assignment Number', \
-                                     'String contains invalid characters "{}"' \
+                messagebox.showerror('Invalid Assignment Number',
+                                     'String contains invalid characters "{}"'
                                      .format(validateStr[weight]))
                 break
             
@@ -240,8 +256,8 @@ class AssignmentTrackerApp(tk.Frame):
                 validEntry = True
                 
             else:
-                messagebox.showerror('Invalid Assignment Number', \
-                                     'A character is entered incorrectly ' \
+                messagebox.showerror('Invalid Assignment Number',
+                                     'A character is entered incorrectly '
                                      'or transposed.')
 
         return validEntry
@@ -293,8 +309,8 @@ class AssignmentTrackerApp(tk.Frame):
             selectedItems = self.trackerTV.selection()
 
             # Ask permission to delete before deleting
-            canDelete = messagebox.askyesno('Delete Entry', \
-                                            'Do you want to delete \n {}' \
+            canDelete = messagebox.askyesno('Delete Entry',
+                                            'Do you want to delete \n {}'
                                             .format(selectedItems[0]))
                 
             if canDelete:
@@ -304,7 +320,7 @@ class AssignmentTrackerApp(tk.Frame):
                     self.progressSaved = False
                 
         except IndexError:
-            messagebox.showerror('No Selection', \
+            messagebox.showerror('No Selection',
                                  'No items have been selected to retrieve')
 
 
@@ -326,8 +342,8 @@ class AssignmentTrackerApp(tk.Frame):
         randomStr += random.choice(['A', 'B', 'C', 'D', 'E'])
 
         for indx in range(0,10):
-            randomStr += random.choice(['A', 'B', 'C', 'D', 'E', 'F', \
-                                    '0', '1', '2', '3', '4', '5', \
+            randomStr += random.choice(['A', 'B', 'C', 'D', 'E', 'F',
+                                    '0', '1', '2', '3', '4', '5',
                                     '6', '7', '8', '9',])
 
         # Get the sum of the generated number and add the check digit
@@ -359,7 +375,7 @@ class AssignmentTrackerApp(tk.Frame):
 
         # Sort the dictionary and more the items to the correct places in the
         # treeview
-        sortedItems = sorted(treeDic, key = treeDic.__getitem__, \
+        sortedItems = sorted(treeDic, key = treeDic.__getitem__,
                              reverse = reverse)
         
         for indx, item in enumerate(sortedItems):
@@ -372,7 +388,7 @@ class AssignmentTrackerApp(tk.Frame):
         if reverse:
             symbol = ' (^)'
 
-        self.trackerTV.heading(colID, text = column + symbol, \
+        self.trackerTV.heading(colID, text = column + symbol,
             command = lambda: self.sortColumn(column, colID, not reverse))
 
 
@@ -391,8 +407,8 @@ class AssignmentTrackerApp(tk.Frame):
         if self.saveProgress():
             filetypes = (('CSV files', '*.csv'),("All files","*.*"))
             ext = '.csv'
-            returnedName = filedialog.askopenfilename(parent = self.master, \
-                                                      defaultextension = ext, \
+            returnedName = filedialog.askopenfilename(parent = self.master,
+                                                      defaultextension = ext,
                                                       filetypes = filetypes)
             
             if returnedName != '':
@@ -412,15 +428,15 @@ class AssignmentTrackerApp(tk.Frame):
                 for item in itemsReader:
                     if len(item) == 5:
                         values = (item[0], item[1], item[2], item[3], item[4])
-                        self.trackerTV.insert('', 'end', iid = item[0], \
+                        self.trackerTV.insert('', 'end', iid = item[0],
                                               values = values)
         except IOError:
-            messagebox.showerror('Cannot Open', '{} not found' \
+            messagebox.showerror('Cannot Open', '{} not found'
                                  .format(self.fileName))
         except ValueError:
             messagebox.showerror('Reading Error', 'Unable to read file')
         except Exception as exception:
-            messagebox.showerror('Unexpected Error', \
+            messagebox.showerror('Unexpected Error',
                                  'Exception: {}'.format(exception))
         
     def saveProject(self):
@@ -440,7 +456,7 @@ class AssignmentTrackerApp(tk.Frame):
                 for item in self.trackerTV.get_children(''):
                     itemsWriter.writerow(self.trackerTV.item(item, 'values'))
         except Exception as exception:
-            messagebox.showerror('Unexpected Error', \
+            messagebox.showerror('Unexpected Error',
                                  'Exception: {}'.format(exception))
 
 
@@ -448,8 +464,8 @@ class AssignmentTrackerApp(tk.Frame):
         '''Saves contents of the widgets to a specified file'''
         filetypes = (('CSV files', '*.csv'),("All files","*.*"))
         ext = '.csv'
-        returnedName = filedialog.asksaveasfilename(parent = self.master, \
-                                                    defaultextension = ext, \
+        returnedName = filedialog.asksaveasfilename(parent = self.master,
+                                                    defaultextension = ext,
                                                     filetypes = filetypes)
 
         if returnedName != '':
@@ -463,7 +479,7 @@ class AssignmentTrackerApp(tk.Frame):
 
         if not self.progressSaved:
             saveNeeded = messagebox \
-                         .askyesno('Save Progress', \
+                         .askyesno('Save Progress',
                                    'Do you want to save your progress?')
             if saveNeeded:
                 self.saveProject()
@@ -480,7 +496,7 @@ class AssignmentTrackerApp(tk.Frame):
                 self.master.destroy()
                 
         except Exception as exception:
-            messagebox.showerror('Unexpected Error', \
+            messagebox.showerror('Unexpected Error',
                                  'Exception: {}'.format(exception))
 
 
